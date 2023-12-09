@@ -1,52 +1,58 @@
 const fs = require('fs');
-const { default: test } = require('node:test');
 const array = fs.readFileSync('./day-1.txt').toString().split("\n");
-
-const arr = ["two1nine",
-"eightwothree",
-"abcone2threexyz",
-"xtwone3four",
-"4nineeightseven2",
-"zoneight234",
-"7pqrstsixteen",
-"9963onefourthree6oneightq"]
 
 const regex = /\d/g
 
-const oneight = /oneight/
-const twone = /twone/
-const threeight = /threeight/
-const fiveight = /fiveight/
-const eightwo = /eightwo/
-const sevenine = /sevenine/
-const nineight = /nineight/
+const replacements = [
+    { regex: /oneight/g, value: 18 },
+    { regex: /twone/g, value: 21 },
+    { regex: /threeight/g, value: 38 },
+    { regex: /fiveight/g, value: 58 },
+    { regex: /sevenine/g, value: 79 },
+    { regex: /nineight/g, value: 98 },
+    { regex: /eightwo/g, value: 82 },
+  ];
+
+function replaceEdgeCases(line){
+    for (const { regex, value } of replacements){
+        line = line.replace(regex, value)
+    }
+    return line
+}
+
+const toNums = [
+    { regex: /one/g, value: 1 },
+    { regex: /two/g, value: 2 },
+    { regex: /three/g, value: 3 },
+    { regex: /four/g, value: 4 },
+    { regex: /five/g, value: 5 },
+    { regex: /six/g, value: 6 },
+    { regex: /seven/g, value: 7 },
+    { regex: /eight/g, value: 8 },
+    { regex: /nine/g, value: 9 },
+  ];
+
+function replaceWordswithNums(line){
+    for (let {regex, value} of toNums){
+        line = line.replace(regex, value)
+    }
+    return line
+}
 
 let total = 0
 
 for (let line of array){
     // replace edge cases eg oneight with 18
-    const firstReplace = line.replace(oneight, 18)
-    const secondReplace = firstReplace.replace(twone, 21)
-    const thirdReplace = secondReplace.replace(threeight, 38)
-    const fourthReplace = thirdReplace.replace(fiveight, 58)
-    const fifthReplace = fourthReplace.replace(sevenine, 79)
-    const sixthReplace = fifthReplace.replace(nineight, 98)
-    const seventhReplace = sixthReplace.replace(eightwo, 82)
+    const lineWithoutEdges = replaceEdgeCases(line)
+  
     // replace normal words with digits
-    const replaceOnes = seventhReplace.replaceAll("one",1)
-    const replaceTwos = replaceOnes.replaceAll("two",2)
-    const replaceThrees = replaceTwos.replaceAll("three",3)
-    const replaceFours = replaceThrees.replaceAll("four",4)
-    const replaceFives = replaceFours.replaceAll("five", 5)
-    const replaceSixs = replaceFives.replaceAll("six", 6)
-    const replaceSevens = replaceSixs.replaceAll("seven",7)
-    const replaceEights = replaceSevens.replaceAll("eight",8)
-    const replaceNines = replaceEights.replaceAll("nine",9)
+    let cleanLine = replaceWordswithNums(lineWithoutEdges)
+    
+    // match all numbers
+    const allNumsInLine = cleanLine.match(regex)
 
-    let eachLine = replaceNines.match(regex)
-
-    total += Number(eachLine[0]+eachLine[eachLine.length-1])
+    total += Number(allNumsInLine[0]+allNumsInLine[allNumsInLine.length-1])
 }
 
-console.log(total)
+console.log(total) // 55358
 
